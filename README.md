@@ -1,4 +1,4 @@
-# Innovaxel Project
+# API SHORTEN Project
 
 ## Setup Instructions
 
