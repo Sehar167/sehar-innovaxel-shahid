@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, abort
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import random
 import string
@@ -19,7 +19,7 @@ class URL(db.Model):
     updated_at = db.Column(db.String(20), default=str(time.time()))
     access_count = db.Column(db.Integer, default=0)
 
-# Create the database
+# Create the database if it doesn't exist
 with app.app_context():
     db.create_all()
 
@@ -35,10 +35,15 @@ def create_short_url():
         return jsonify({"error": "URL is required"}), 400
 
     original_url = data['url']
-    short_code = generate_short_code()
+    
+    # Function to generate a unique short code
+    def get_unique_short_code():
+        short_code = generate_short_code()
+        while URL.query.filter_by(short_code=short_code).first():
+            short_code = generate_short_code()  # Ensure uniqueness
+        return short_code
 
-    while URL.query.filter_by(short_code=short_code).first():
-        short_code = generate_short_code()  # Ensure uniqueness
+    short_code = get_unique_short_code()
 
     new_url = URL(url=original_url, short_code=short_code)
     db.session.add(new_url)
