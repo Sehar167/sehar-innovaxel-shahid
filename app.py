@@ -4,6 +4,14 @@ import random
 import string
 import time
 import re
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+@app.before_request
+def log_request_info():
+    logging.info(f"Request Method: {request.method} | Request URL: {request.url}")
+
 
 def is_valid_url(url):
     regex = re.compile(
