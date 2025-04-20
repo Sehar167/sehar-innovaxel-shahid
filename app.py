@@ -114,6 +114,12 @@ def delete_short_url(short_code):
     if not url_entry:
         return jsonify({"error": "Short URL not found"}), 404
 
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
     db.session.delete(url_entry)
     db.session.commit()
 
